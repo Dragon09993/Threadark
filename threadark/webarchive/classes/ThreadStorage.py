@@ -14,56 +14,69 @@ class ThreadStorage:
         self.board = board
 
     def store_posts(self,thread_id):
-        posts = self.FourChanApiWrapper.get_posts_with_urls(thread_id)['posts']
+        
         #pprint(posts)
         #exit()
         json_response = self.FourChanApiWrapper.get_posts_from_thread(thread_id)
-        for index, post in enumerate(posts):
+        if not json_response:
+            thread = Thread.objects.filter(thread_id=thread_id, board=self.board).first()
+            if thread:
+                thread.status = 'closed'
+                thread.save()
+            print(f"Failed to retrieve posts for thread {thread_id}")
+            return
+        else:
+            posts = self.FourChanApiWrapper.get_posts_with_urls(thread_id)['posts']
+            for index, post in enumerate(posts):
 
-            if 'image_url' in post and post['image_url']:
-                minio_url = self.store_image_in_minio(post['image_url'])
-            else:
-                minio_url = ''
-            if 'sub' not in post:
-                post['sub']=''
-            if index == 0:
-                # Perform some action for the first post
-                thread, created = Thread.objects.get_or_create(
-                    thread_id=thread_id,
+                if 'image_url' in post and post['image_url']:
+                    minio_url = self.store_image_in_minio(post['image_url'])
+                else:
+                    minio_url = ''
+                if 'sub' not in post:
+                    post['sub']=''
+                if index == 0:
+                    # Perform some action for the first post
+                    thread, created = Thread.objects.get_or_create(
+                        thread_id=thread_id,
+                        defaults={
+                            'board': self.board,
+                            'title': post['sub'],
+                            'url': minio_url,
+                            'created_at': datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S'),
+                            'last_updated': datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
+                            'response_json': json_response,
+                        })
+                    if 'archived_on' in post:
+                        thread.status = 'archived'
+                        
+                    if not created:
+                        # Update the existing thread if needed
+                        thread.title = post['sub']
+                        thread.url = post['image_url']
+                        thread.created_at = datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S')
+
+                    thread.last_updated = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+                    thread.response_json = json_response
+                    thread.replies = post['replies']
+                    thread.save()
+
+                # Store post in Django's PostgreSQL database
+                message, created = Message.objects.update_or_create(
+                    message_id=post['no'],
                     defaults={
+                        'thread_id': thread,
+                        'text': post.get('com'),
+                        'image_url': minio_url,
                         'board': self.board,
-                        'title': post['sub'],
-                        'url': minio_url,
-                        'created_at': datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S'),
-                        'last_updated': datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
-                        'response_json': json_response,
+                        'time': datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S'),
                     }
                 )
                 if not created:
-                    # Update the existing thread if needed
-                    thread.title = post['sub']
-                    thread.url = post['image_url']
-                    thread.created_at = datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S')
-
-                thread.last_updated = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-                thread.save()
-
-            # Store post in Django's PostgreSQL database
-            message, created = Message.objects.update_or_create(
-                message_id=post['no'],
-                defaults={
-                    'thread_id': thread,
-                    'text': post.get('com'),
-                    'image_url': minio_url,
-                    'board': self.board,
-                    'time': datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S'),
-                }
-            )
-            if not created:
-                # Update the existing message if needed
-                message.text = post.get('com')
-                message.image_url = minio_url
-                message.save()
+                    # Update the existing message if needed
+                    message.text = post.get('com')
+                    message.image_url = minio_url
+                    message.save()
 
 
     def store_image_in_minio(self, image_url):

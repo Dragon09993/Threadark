@@ -3,51 +3,44 @@
 {% block content %}
 <div class="container">
     <h1 class="title">Threads</h1>
-    <div class="list">
 
+    <!-- Search Form -->
+    <form id="search-form" hx-get="{% url 'view_archive_with_board' board %}" hx-target="#thread-list" hx-trigger="keyup changed delay:500ms">
+        <input type="text" name="search" placeholder="Search threads..." value="{{ request.GET.search }}">
+    </form>
+
+    <div class="list">
         <table class="table is-striped is-hoverable is-fullwidth">
             <thead>
             <tr>
-                <th>Thread ID</th>
-                <th>Board</th>
-                <th>Title</th>
-                <th>Status</th>
+                <th><a href="?sort=thread_id" hx-get="{% url 'view_archive_with_board' board %}?sort=thread_id" hx-target="#thread-list">Thread ID</a></th>
+                <th><a href="?sort=board" hx-get="{% url 'view_archive_with_board' board %}?sort=board" hx-target="#thread-list">Board</a></th>
+                <th><a href="?sort=title" hx-get="{% url 'view_archive_with_board' board %}?sort=title" hx-target="#thread-list">Title</a></th>
+                <th><a href="?sort=status" hx-get="{% url 'view_archive_with_board' board %}?sort=status" hx-target="#thread-list">Status</a></th>
+                <th><a href="?sort=replies" hx-get="{% url 'view_archive_with_board' board %}?sort=replies" hx-target="#thread-list">Replies</a></th>
                 <th>URL</th>
-                <th>Created At</th>
-                <th>Last Updated</th>
+                <th><a href="?sort=created_at" hx-get="{% url 'view_archive_with_board' board %}?sort=created_at" hx-target="#thread-list">Created At</a></th>
+                <th><a href="?sort=last_updated" hx-get="{% url 'view_archive_with_board' board %}?sort=last_updated" hx-target="#thread-list">Last Updated</a></th>
             </tr>
             </thead>
-            <tbody>
-            {% for thread in threads %}
-            <tr>
-                <td>{{ thread.thread_id }}</td>
-                <td>{{ thread.board }}</td>
-                <td><a href="{% url 'view_thread' board thread.thread_id %}">{{ thread.title }}</a></td>
-                <td>{{ thread.status }}</td>
-                <td><a href="{{ thread.url }}">{{ thread.url }}</a></td>
-                <td>{{ thread.created_at }}</td>
-                <td>{{ thread.last_updated }}</td>
-            </tr>
-            {% endfor %}
+            <tbody id="thread-list">
+            {% include "webarchive/partials/thread_list.html" %}
             </tbody>
         </table>
-
     </div><!-- .list-->
-    
+
     <div class="pagination">
         {% if threads.has_previous %}
-            <a href="?page=1">First</a>
-            <a href="?page={{ threads.previous_page_number }}">Previous</a>
+            <a href="?page=1" hx-get="{% url 'view_archive_with_board' board %}?page=1" hx-target="#thread-list">First</a>
+            <a href="?page={{ threads.previous_page_number }}" hx-get="{% url 'view_archive_with_board' board %}?page={{ threads.previous_page_number }}" hx-target="#thread-list">Previous</a>
         {% endif %}
-    
+
         Page {{ threads.number }} of {{ threads.paginator.num_pages }}
-    
+
         {% if threads.has_next %}
-            <a href="?page={{ threads.next_page_number }}">Next</a>
-            <a href="?page={{ threads.paginator.num_pages }}">Last</a>
+            <a href="?page={{ threads.next_page_number }}" hx-get="{% url 'view_archive_with_board' board %}?page={{ threads.next_page_number }}" hx-target="#thread-list">Next</a>
+            <a href="?page={{ threads.paginator.num_pages }}" hx-get="{% url 'view_archive_with_board' board %}?page={{ threads.paginator.num_pages }}" hx-target="#thread-list">Last</a>
         {% endif %}
     </div>
-    
-
 </div><!-- .container-->
 {% endblock %}

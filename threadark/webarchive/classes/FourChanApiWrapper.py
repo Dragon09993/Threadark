@@ -29,7 +29,8 @@ class FourChanApiWrapper:
         if response.status_code == 200:
             return response.json()
         else:
-            response.raise_for_status()
+            
+            return False
 
     def get_catalog(self):
         url = f"{self.BASE_API_URL}/{self.board}/catalog.json"

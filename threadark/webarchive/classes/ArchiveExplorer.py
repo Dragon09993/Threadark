@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from webarchive.models import Thread, Message
 from pprint import pprint
 
@@ -31,7 +32,21 @@ class ArchiveExplorer:
             return None
         
     def get_all_threads(self, request, pageSize=25):
-        threads = Thread.objects.filter(board=self.board).order_by('thread_id') 
+        search_query = request.GET.get('search', '')
+        sort_by = request.GET.get('sort', 'thread_id')
+
+        threads = Thread.objects.filter(board=self.board)
+
+        if search_query:
+            threads = threads.filter(
+                Q(thread_id__icontains=search_query) |
+                Q(board__icontains=search_query) |
+                Q(title__icontains=search_query) |
+                Q(status__icontains=search_query)
+            )
+
+        threads = threads.order_by(sort_by)
+        
         page = request.GET.get('page', 1)  # Get page number from URL
         paginator = Paginator(threads, pageSize)  
         

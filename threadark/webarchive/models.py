@@ -9,11 +9,13 @@ class Thread(models.Model):
     # 4chan board
     board = models.CharField(max_length=5)
     title = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(max_length=15)
+    status = models.CharField(max_length=15, default='open')
     url = models.URLField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    replies = models.IntegerField(default=0)
     response_json = models.JSONField(null=True, blank=True)
+    
 
     class Meta:
         unique_together = ("board", "thread_id")  # Ensure (board, thread_id) is unique

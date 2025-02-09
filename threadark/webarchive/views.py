@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
+from django_htmx.http import HttpResponseClientRedirect
 
 from .classes.FourChanApiWrapper import FourChanApiWrapper
 from pprint import pprint
@@ -70,9 +71,10 @@ def store_posts(request, board, thread_id):
 
 @login_required
 def view_archive(request, board, page=1):
-    thread_list = []
     explorer = ArchiveExplorer(board)
     threads = explorer.get_all_threads(request)
-    pprint(threads)
+
+    if request.htmx:
+        return render(request, 'webarchive/partials/thread_list.html', {'threads': threads, 'board': board})
 
     return render(request, 'webarchive/view_archive.html', {'threads': threads, 'board': board})

@@ -8,3 +8,4 @@ minio
 requests
 django-compressor
 django-pipeline
+django-htmx

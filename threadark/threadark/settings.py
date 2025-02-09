@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'pipeline',
     'compressor',
     'webarchive',
+    'django_htmx',
 ]
 
 MIDDLEWARE = [
@@ -30,6 +31,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'threadark.urls'
@@ -136,8 +138,6 @@ PIPELINE = {
     'CSS_COMPRESSOR': 'pipeline.compressors.cssmin.CSSMinCompressor',
     'JS_COMPRESSOR': 'pipeline.compressors.uglifyjs.UglifyJSCompressor',
 }
-
-
 
 COMPRESS_ENABLED = True
 #COMPRESS_OFFLINE = True
