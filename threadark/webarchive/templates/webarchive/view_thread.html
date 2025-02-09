@@ -23,7 +23,9 @@
                                 {% endif %}
                             </div>
                             <div class="media-content is-full-mobile">
+                                {% if forloop.first %}
                                 <p class="title is-4">{{ post.sub }}</p>
+                                {% endif %}
                                 <p class="subtitle is-6">
                                     <span class="has-text-weight-bold">{{ post.name }}</span>
                                     <span class="has-text-grey">{{ post.now }}</span>

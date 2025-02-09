@@ -45,6 +45,9 @@ class ThreadStorage:
                     thread.url = post['image_url']
                     thread.created_at = datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S')
 
+                thread.last_updated = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+                thread.save()
+
             # Store post in Django's PostgreSQL database
             message, created = Message.objects.update_or_create(
                 message_id=post['no'],
