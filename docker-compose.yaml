@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python threadark/manage.py runserver 0.0.0.0:8000
+    #command: tail -f /dev/null
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - minio
+    environment:
+      - DATABASE_URL=postgres://webarchive_admin:password@db:5432/app
+      - REDIS_URL=redis://4chan_scraper-redis-1:6379/0
+      - DB_NAME=webarchive
+      - DB_USER=webarchive_admin
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - AWS_ACCESS_KEY_ID=Dx1wHMy7G3Vxw492Tmkh
+      - AWS_SECRET_ACCESS_KEY=9EcXTUmPtGSs2hJd4aifsFj8visACnC9JnC7OBYE
+      - AWS_STORAGE_BUCKET_NAME=picels
+      - AWS_S3_ENDPOINT_URL=http://127.0.0.1:9000
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: webarchive_admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: webarchive
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    links:
+      - db:db
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"  # S3 API
+      - "9001:9001"  # MinIO Web UI
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./minio_data:/data
+
+volumes:
+  postgres_data:
+  minio_data:

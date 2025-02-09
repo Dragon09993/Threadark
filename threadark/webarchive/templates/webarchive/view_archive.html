@@ -1,0 +1,53 @@
+{% extends "webarchive/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title">Threads</h1>
+    <div class="list">
+
+        <table class="table is-striped is-hoverable is-fullwidth">
+            <thead>
+            <tr>
+                <th>Thread ID</th>
+                <th>Board</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>URL</th>
+                <th>Created At</th>
+                <th>Last Updated</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for thread in threads %}
+            <tr>
+                <td>{{ thread.thread_id }}</td>
+                <td>{{ thread.board }}</td>
+                <td><a href="{% url 'view_thread' board thread.thread_id %}">{{ thread.title }}</a></td>
+                <td>{{ thread.status }}</td>
+                <td><a href="{{ thread.url }}">{{ thread.url }}</a></td>
+                <td>{{ thread.created_at }}</td>
+                <td>{{ thread.last_updated }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div><!-- .list-->
+    
+    <div class="pagination">
+        {% if threads.has_previous %}
+            <a href="?page=1">First</a>
+            <a href="?page={{ threads.previous_page_number }}">Previous</a>
+        {% endif %}
+    
+        Page {{ threads.number }} of {{ threads.paginator.num_pages }}
+    
+        {% if threads.has_next %}
+            <a href="?page={{ threads.next_page_number }}">Next</a>
+            <a href="?page={{ threads.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </div>
+    
+
+</div><!-- .container-->
+{% endblock %}

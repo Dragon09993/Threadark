@@ -1,0 +1,103 @@
+<!-- base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Project{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    {% load static %}
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+    {% load pipeline %}
+    {% load compress %}
+    {% block extra_head %}{% endblock %}
+
+
+
+    {% compress css %}
+    {% stylesheet 'styles' %}
+    {% endcompress %}
+   
+</head>
+<body>
+    <header>
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="#">
+                    <h1>4Chan Thread Archive</h1>
+                </a>
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start">
+                    <a class="navbar-item" href="#">
+                        Home
+                    </a>
+                    <a class="navbar-item" href="#">
+                        About
+                    </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link" href="#">
+                            Live Boards
+                        </a>
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'adv' %}"">
+                                /adv/ - Advice
+                            </a>
+                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'trv' %}">
+                                /trv/ - Travel
+                            </a>
+                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'sci' %}">
+                                /sci/ - Science
+                            </a>
+                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'mu' %}">
+                                /mu/ - Music
+                            </a>
+                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'g' %}">
+                                /g/ - Technology
+                            </a>
+                                <!-- Add more boards as needed -->
+                            </div>
+                        </div>
+
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link" href="#">
+                                Archives
+                            </a>
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'adv' %}"">
+                                    /adv/ - Advice
+                                </a>
+                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'trv' %}">
+                                    /trv/ - Travel
+                                </a>
+                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'sci' %}">
+                                    /sci/ - Science
+                                </a>
+                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'mu' %}">
+                                    /mu/ - Music
+                                </a>
+                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'g' %}">
+                                    /g/ - Technology
+                                </a>
+                                    <!-- Add more boards as needed -->
+                                </div>
+                            </div>                        
+                    
+                </div>
+            </div>
+        </nav>
+    </header>
+    {% block content %}{% endblock %}
+    {% compress js %}
+    {% javascript 'scripts' %}
+    {% endcompress %}
+    
+</body>
+</html>

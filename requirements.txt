@@ -1,0 +1,10 @@
+Django
+psycopg2-binary
+redis
+dj_database_url
+boto3
+django-storages
+minio
+requests
+django-compressor
+django-pipeline

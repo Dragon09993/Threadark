@@ -1,0 +1,168 @@
+body {
+    background-color: #ffec83;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.catalog {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.thread {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    padding: 15px;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    transition: transform 0.2s;
+}
+
+.thread:hover {
+    transform: scale(1.05);
+}
+
+.thread img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.thread-info {
+    margin-top: 10px;
+}
+
+.thread-info h3 {
+    font-size: 1.2em;
+    margin: 0;
+    color: #333;
+}
+
+.thread-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.picel {
+    overflow:hidden;
+}
+
+@media (max-width: 768px) {
+    .thread {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .thread {
+        width: 100%;
+    }
+}
+
+
+
+
+    .col-spacer{
+        height : 50vh !important;
+        min-height: 600px !important;
+        margin-top:1rem;
+        margin-bottom:1rem;
+
+        .card-item {
+            margin-bottom: 20px;
+            height: 50vh;
+            min-height: 600px;
+
+            .content {
+                line-height: 1.2rem;
+                overflow: hidden;
+                height:85px;
+            }
+
+
+            .media-content{
+                height: 54px;
+            }
+        }
+    }
+
+
+    .navbar {
+        background-color: #333;
+        color: #fff;
+        transition: all 0.3s ease-in-out;
+
+        .navbar-item {
+            color: #fff;
+            background-color: #333;
+
+            &:hover {
+                background-color: #444;
+                color: #fff;
+            }
+        }
+
+        .navbar-burger { 
+            color: #fff;
+
+            &:hover {
+                color: #ddd;
+            }
+        }
+
+        .navbar-menu {
+            background-color: #333;
+
+            .navbar-item {
+                color: #fff;
+
+                &:hover {
+                    background-color: #444;
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+
+
+@media (max-width: 768px) {
+    .is-flex-direction-column-mobile {
+        flex-direction: column;
+    }
+
+    nav.sticky-top-right {
+        width:100%;
+    }
+}
+
+
+nav.sticky-top-right {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    transition: all 0.3s ease-in-out;
+}
+
+
+
+.navbar-link,.navbar-dropdown{
+    color:#ffffff;
+    background-color: #333 !important;
+}
+
+
+.highlight{
+    background-color: #ffb1b1 !important;
+}
+
+.picel{
+    min-width: 128px;
+    width: fit-content;
+}
