@@ -32,6 +32,7 @@ share/python-wheels/
 *.pyo
 *.pyd
 *.sqlite3
+
 db.sqlite3
 media
 staticfiles
@@ -49,3 +50,6 @@ venv/
 ENV/
 env/
 .venv/
+
+
+*.mp3

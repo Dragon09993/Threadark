@@ -1,5 +1,11 @@
 {% extends "webarchive/base.html" %}
 
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+{% endblock %}
+
 {% block title %}Thread View{% endblock %}
 
 {% block content %}
@@ -7,7 +13,7 @@
     <div class="section">
         <div class="box">
             <h1 class="title is-inline">Thread on /{{ board }}/</h1>
-            <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/store/{{board}}/{{thread_id}}"class="button is-primary is-pulled-right">Update Thread</a>
+            <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/{{board}}/audio/{{thread_id}}" hx-swap="innerHTML" class="button is-warning is-pulled-right">Generate TTS Audio</a>
         </div>
         <div class="columns is-multiline">
             {% for post in posts %}
@@ -30,6 +36,9 @@
                                     <span class="has-text-weight-bold">{{ post.name }}</span>
                                     <span class="has-text-grey">{{ post.now }}</span>
                                     <span class="has-text-grey">No.{{ post.no }}</span>
+                                    {% if post.has_audio %}
+                                    <button id="play-button-{{ post.no }}" class="button is-small is-info play-audio is-pulled-right" data-audio-url="{{ post.audio_url }}" data-card-id="p{{ post.no }}">Play Audio</button>
+                                    {% endif %}
                                 </p>
                                 <p class="subtitle is-6">{{ post.com|safe }}</p>
                             </div>
@@ -41,4 +50,61 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var currentSound = null;
+    var currentButton = null;
+
+    document.querySelectorAll('.play-audio').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var audioUrl = this.getAttribute('data-audio-url');
+            var cardId = this.getAttribute('data-card-id');
+            var cardElement = document.getElementById(cardId);
+            var buttonId = this.id;
+            var playButton = document.getElementById(buttonId);
+
+            if (currentSound && currentSound.playing()) {
+                if (currentButton === playButton) {
+                    currentSound.stop();
+                    playButton.textContent = 'Play Audio';
+                    playButton.classList.remove('stop-audio');
+                    return;
+                } else {
+                    currentSound.stop();
+                    currentButton.textContent = 'Play Audio';
+                    currentButton.classList.remove('stop-audio');
+                }
+            }
+
+            currentSound = new Howl({
+                src: [audioUrl],
+                format: ['mp3'],
+                onplay: function() {
+                    cardElement.classList.add('audio-highlight');
+                    playButton.textContent = 'Stop Audio';
+                    playButton.classList.add('stop-audio');
+                },
+                onend: function() {
+                    cardElement.classList.remove('audio-highlight');
+                    playButton.textContent = 'Play Audio';
+                    playButton.classList.remove('stop-audio');
+                    currentSound = null;
+                    currentButton = null;
+                },
+                onstop: function() {
+                    cardElement.classList.remove('audio-highlight');
+                    playButton.textContent = 'Play Audio';
+                    playButton.classList.remove('stop-audio');
+                    currentSound = null;
+                    currentButton = null;
+                }
+            });
+
+            currentSound.play();
+            currentButton = playButton;
+        });
+    });
+});
+</script>
 {% endblock %}

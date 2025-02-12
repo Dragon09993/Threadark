@@ -12,5 +12,6 @@ urlpatterns = [
     path('store/<str:board>/<int:thread_id>/', views.store_posts, name='store_posts'),
     path( '<str:board>/thread/<int:thread_id>/', views.view_thread, name='view_thread' ),
     path( '<str:board>/list/', views.view_archive, name='view_archive_with_board' ),
-    path( '<str:board>/list/<int:page>/', views.view_archive, name='view_archive_with_board' ),
+    path( '<str:board>/data/', views.archive_data, name='get_archive_data' ),
+    path( '<str:board>/audio/<int:thread_id>/', views.tts_audio, name='tts_audio' ),
 ]

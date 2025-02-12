@@ -22,7 +22,7 @@ services:
       - AWS_ACCESS_KEY_ID=Dx1wHMy7G3Vxw492Tmkh
       - AWS_SECRET_ACCESS_KEY=9EcXTUmPtGSs2hJd4aifsFj8visACnC9JnC7OBYE
       - AWS_STORAGE_BUCKET_NAME=picels
-      - AWS_S3_ENDPOINT_URL=http://127.0.0.1:9000
+      - AWS_S3_ENDPOINT_URL=minio:9000
 
   db:
     image: postgres:13

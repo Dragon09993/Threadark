@@ -19,7 +19,9 @@ class ArchiveExplorer:
                     'name': 'Anonymous',  # Assuming all posts are anonymous
                     'now': message.time.strftime('%m/%d/%y(%a)%H:%M:%S'),
                     'com': message.text,
-                    'image_url': message.image_url
+                    'image_url': message.image_url,
+                    'audio_url': message.audio_url,
+                    'has_audio': message.has_audio
                 }
                 posts.append(post)
             context = {
@@ -34,6 +36,7 @@ class ArchiveExplorer:
     def get_all_threads(self, request, pageSize=25):
         search_query = request.GET.get('search', '')
         sort_by = request.GET.get('sort', 'thread_id')
+        sort_order = request.GET.get('sort_order', 'asc')
 
         threads = Thread.objects.filter(board=self.board)
 
@@ -44,6 +47,9 @@ class ArchiveExplorer:
                 Q(title__icontains=search_query) |
                 Q(status__icontains=search_query)
             )
+
+        if sort_order == 'desc':
+            sort_by = f'-{sort_by}'
 
         threads = threads.order_by(sort_by)
         
@@ -57,4 +63,4 @@ class ArchiveExplorer:
         except EmptyPage:
                 threads_page = paginator.page(paginator.num_pages)  # If page is out of range, show last page
 
-        return threads_page
+        return threads_page,threads,paginator

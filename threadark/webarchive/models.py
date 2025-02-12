@@ -39,6 +39,7 @@ class Message(models.Model):
     # has_audio boolean
     has_audio = models.BooleanField(default=False)
     image_url = models.URLField(max_length=255, null=True, blank=True)
+    audio_url = models.URLField(max_length=255, null=True, blank=True)
 
     class Meta:
         unique_together = ("board", "thread_id", "message_id")  # Ensure (board, thread_id) is unique

@@ -9,3 +9,4 @@ requests
 django-compressor
 django-pipeline
 django-htmx
+gtts
