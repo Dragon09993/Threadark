@@ -10,3 +10,5 @@ django-compressor
 django-pipeline
 django-htmx
 gtts
+transformers
+torch

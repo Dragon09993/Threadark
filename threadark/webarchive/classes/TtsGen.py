@@ -47,6 +47,9 @@ class TtsGen:
         message.audio_url = minio_url
         message.save()
 
+        # Delete the local audio file after uploading
+        os.remove(audio_file)
+
     def generate_thread_audio(self):
         print(f"Board: {self.board}, Thread ID: {self.thread_id}")
         # Fetch all messages from the thread
