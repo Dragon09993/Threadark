@@ -48,4 +48,4 @@ class Message(models.Model):
         ]
 
     def __str__(self):
-        return self.text[:50]  # Return first 50 characters of the message text
+        return self.text[:50] if self.text else ''  # Return first 50 characters of the message text or an empty string if text is None

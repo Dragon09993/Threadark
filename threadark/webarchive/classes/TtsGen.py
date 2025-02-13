@@ -6,6 +6,7 @@ from pprint import pprint
 from webarchive.models import Thread
 import re
 import html
+
 class TtsGen:
     def __init__(self, board, thread_id):
         self.board = board
@@ -20,10 +21,13 @@ class TtsGen:
        
         self.tts_engine = gTTS
     
-    def generate_message_audio(self, thread_id_id, message_id):
-        # Fetch the message from the database
-        message = Message.objects.filter(thread_id=thread_id_id, message_id=message_id).first()
-        text = re.sub(r'>{2}\d+', '',re.sub(r'<[^>]+>', '', html.unescape(message.text)))
+    def generate_message_audio(self, thread_id, message_id):
+        message = Message.objects.filter(thread_id=thread_id, message_id=message_id).first()
+        if message.text is None:
+            text = ""
+        else:
+            text = re.sub(r'>{2}\d+', '', re.sub(r'<[^>]+>', '', html.unescape(message.text)))
+        
         if message.has_audio:
             print(f"Audio already exists for message {message_id}")
             return
