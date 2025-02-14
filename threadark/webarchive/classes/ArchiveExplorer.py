@@ -32,6 +32,9 @@ class ArchiveExplorer:
             return context
         except Thread.DoesNotExist:
             return None
+
+    def thread_exists(self, thread_id):
+        return Thread.objects.filter(board=self.board, thread_id=thread_id).exists()
         
     def get_all_threads(self, request, pageSize=25):
         search_query = request.GET.get('search', '')
@@ -63,4 +66,4 @@ class ArchiveExplorer:
         except EmptyPage:
                 threads_page = paginator.page(paginator.num_pages)  # If page is out of range, show last page
 
-        return threads_page,threads,paginator
+        return threads_page, threads, paginator

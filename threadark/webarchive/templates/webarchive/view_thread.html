@@ -13,9 +13,12 @@
     <div class="section">
         <div class="box">
             <h1 class="title is-inline">Thread on /{{ board }}/</h1>
-            <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/{{board}}/audio/{{thread_id}}" hx-swap="innerHTML" class="button is-warning is-pulled-right">Generate TTS Audio</a>
+            <div id="controls" class="buttons are-small is-pulled-right">
+                <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/{{board}}/audio/{{thread_id}}" hx-swap="innerHTML" class="button is-warning is-pulled-right">Generate TTS Audio</a>
+            </div>
+            
         </div>
-        <div class="columns is-multiline">
+        <div id="MessageList" class="columns is-multiline">
             {% for post in posts %}
             <div class="column is-full">
                 <div id="p{{ post.no }}" data-message-no="{{ post.no }}" class="card message">
@@ -51,60 +54,5 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var currentSound = null;
-    var currentButton = null;
-
-    document.querySelectorAll('.play-audio').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var audioUrl = this.getAttribute('data-audio-url');
-            var cardId = this.getAttribute('data-card-id');
-            var cardElement = document.getElementById(cardId);
-            var buttonId = this.id;
-            var playButton = document.getElementById(buttonId);
-
-            if (currentSound && currentSound.playing()) {
-                if (currentButton === playButton) {
-                    currentSound.stop();
-                    playButton.textContent = 'Play Audio';
-                    playButton.classList.remove('stop-audio');
-                    return;
-                } else {
-                    currentSound.stop();
-                    currentButton.textContent = 'Play Audio';
-                    currentButton.classList.remove('stop-audio');
-                }
-            }
-
-            currentSound = new Howl({
-                src: [audioUrl],
-                format: ['mp3'],
-                onplay: function() {
-                    cardElement.classList.add('audio-highlight');
-                    playButton.textContent = 'Stop Audio';
-                    playButton.classList.add('stop-audio');
-                },
-                onend: function() {
-                    cardElement.classList.remove('audio-highlight');
-                    playButton.textContent = 'Play Audio';
-                    playButton.classList.remove('stop-audio');
-                    currentSound = null;
-                    currentButton = null;
-                },
-                onstop: function() {
-                    cardElement.classList.remove('audio-highlight');
-                    playButton.textContent = 'Play Audio';
-                    playButton.classList.remove('stop-audio');
-                    currentSound = null;
-                    currentButton = null;
-                }
-            });
-
-            currentSound.play();
-            currentButton = playButton;
-        });
-    });
-});
-</script>
+<script src="{% static 'js/howler-eventhandlers.js' %}"></script>
 {% endblock %}

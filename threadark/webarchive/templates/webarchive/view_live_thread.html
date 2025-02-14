@@ -1,13 +1,25 @@
 {% extends "webarchive/base.html" %}
 
 {% block title %}Thread View{% endblock %}
+{% block extra_head %}
+<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="section">
         <div class="box">
             <h1 class="title is-inline">Thread on /{{ board }}/</h1>
-            <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/store/{{board}}/{{thread_id}}"class="button is-primary is-pulled-right">Archive Thread</a>
+
+            <div id="controls" class="buttons are-small is-pulled-right">
+                {% if not is_archived %}
+                <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/store/{{board}}/{{thread_id}}" class="button is-primary">Archive Thread</a>
+                {% endif %}
+                {% if is_archived %}
+                <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/store/{{board}}/{{thread_id}}" class="button is-primary">Update Thread</a>
+                <a href="/archive/{{ board }}/thread/{{ thread_id }}/" class="button is-link">View Archived Thread</a>
+                {% endif %}
+            </div>
         </div>
         <div class="columns is-multiline">
             {% for post in posts %}
