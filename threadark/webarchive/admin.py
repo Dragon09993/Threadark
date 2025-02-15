@@ -26,10 +26,23 @@ class BoardAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def threads_view(self, request):
-        context = {}
+        query = request.GET.get('q')
+        threads = Thread.objects.all()
+        if query:
+            threads = threads.filter(thread_id__icontains=query) | threads.filter(title__icontains=query)
+        context = {
+            'threads': threads,
+            'query': query,
+        }
         return render(request, 'admin/threads.html', context)
 
+class ThreadAdmin(admin.ModelAdmin):
+    list_display = ('thread_id', 'title', 'board', 'status', 'created_at', 'last_updated')
+    search_fields = ('thread_id', 'title')
+    list_filter = ('board', 'status')
+    ordering = ('-created_at',)
+
 admin.site.register(Board, BoardAdmin)
-admin.site.register(Thread)
+admin.site.register(Thread, ThreadAdmin)
 
 

@@ -26,7 +26,9 @@ class ThreadStorage:
             print(f"Failed to retrieve posts for thread {thread_id}")
             return
         else:
-            posts = self.FourChanApiWrapper.get_posts_with_urls(thread_id)['posts']
+            apiobj = self.FourChanApiWrapper.get_posts_with_urls(thread_id)
+            posts= apiobj['posts']
+            url = apiobj['info']['url'];
             for index, post in enumerate(posts):
 
                 if 'image_url' in post and post['image_url']:
@@ -42,7 +44,7 @@ class ThreadStorage:
                         defaults={
                             'board': self.board,
                             'title': post['sub'],
-                            'url': minio_url,
+                            'url': url,
                             'created_at': datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S'),
                             'last_updated': datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'),
                             'response_json': json_response,
@@ -53,7 +55,7 @@ class ThreadStorage:
                     if not created:
                         # Update the existing thread if needed
                         thread.title = post['sub']
-                        thread.url = post['image_url']
+                        thread.url = url
                         thread.created_at = datetime.fromtimestamp(post['time']).strftime('%Y-%m-%d %H:%M:%S')
 
                     thread.last_updated = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')

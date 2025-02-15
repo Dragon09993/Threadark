@@ -25,7 +25,7 @@ class Command(BaseCommand):
                     decoded_text = html.unescape(first_message.text)
                     
                     # Generate a title using the first message
-                    summary = summarizer(decoded_text, max_length=10, min_length=5, do_sample=False)
+                    summary = summarizer(decoded_text, max_length=20, min_length=10, do_sample=False)
                     generated_title = summary[0]['summary_text']
 
                     # Update the thread title

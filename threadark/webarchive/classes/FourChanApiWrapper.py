@@ -43,7 +43,8 @@ class FourChanApiWrapper:
     
     def get_posts_with_urls(self, thread_id):
         thread_data = self.get_posts_from_thread(thread_id)
-        thread_data["info"] = {"thread_id": thread_id}
+        thread_data["info"] = {"thread_id": thread_id,
+                               "url":f"{self.BASE_API_URL}/{self.board}/thread/{thread_id}.json"}
         for post in thread_data["posts"]:
             if "tim" in post and "ext" in post:
                 post["image_url"] = f"{self.BASE_IMAGE_URL}/{self.board}/{post['tim']}{post['ext']}"
