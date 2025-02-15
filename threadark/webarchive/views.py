@@ -72,7 +72,20 @@ def archive_data(request, board):
     data = {
         "last_page": paginator.num_pages,
         "page": request.GET.get('page', 1),
-        "data": list(threads_pages.object_list.values())
+        "data": [
+            {
+                "id": thread.id,
+                "thread_id": thread.thread_id,
+                "board": thread.board,
+                "title": thread.title,
+                "status": thread.status,
+                "url": thread.url,
+                "replies": thread.replies,
+                "created_at": thread.created_at,
+                "last_updated": thread.last_updated
+            }
+            for thread in threads_pages.object_list
+        ]
     }
     return JsonResponse(data)
 

@@ -25,20 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ajaxConfig:"GET",
         ajaxContentType : "application/json; charset=utf-8",
         ajaxContentType:"json",
-        pagination: "local",
-        paginationSize: 10,
-        paginationDataSent: {
-            "page": "page",
-            "size": "size"
+        pagination:true,
+        paginationMode: "remote",
+        ajaxResponse: function (url, params, response) {
+            return response; // Fix: Ensure only the array is returned
         },
-        paginationDataReceived: {
-            "last_page": "last_page",
-            "page"  : "current_page",
-            "data": "data"
-        },
+
         layout: "fitColumns",
         columns: [
-        { title: "ID", field: "id", sorter: "number" },
+            { title: "ID", field: "id", sorter: "number" },
             { title: "Thread ID", field: "thread_id", sorter: "number", formatter: function(cell, formatterParams, onRendered) {
                 var thread_id = cell.getValue();
                 var board = cell.getData().board;
@@ -46,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return "<a href='" + url + "' target='_blank'>" + thread_id + "</a>";
             }},
             { title: "Board", field: "board", sorter: "string" },
-            { title: "Title", field: "title", sorter: "string", formatter: function(cell, formatterParams, onRendered) {
+            { title: "Title", field: "title", sorter: "string", minWidth: 400, formatter: function(cell, formatterParams, onRendered) {
                 var thread_id = cell.getData().thread_id;
                 var board = cell.getData().board;
                 var url = "/archive/" + board + "/thread/" + thread_id;
@@ -58,20 +53,19 @@ document.addEventListener('DOMContentLoaded', function() {
             { title: "Created At", field: "created_at", sorter: "datetime" },
             { title: "Last Updated", field: "last_updated", sorter: "datetime" }
         ],
-        ajaxResponse: function(url, params, response) {
-            if(response.error) {
-                console.error("Error fetching data:", response.error);
-                return [];
-            }
-            console.log(response);
-            return  response.data;
-            
-        }
+
     });
 
     document.getElementById('search-input').addEventListener('input', function() {
         table.setFilter("title", "like", this.value);
     });
+
+
+
+
+    
 });
+
+
 </script>
 {% endblock %}

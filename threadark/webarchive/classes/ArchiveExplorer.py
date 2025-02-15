@@ -36,7 +36,7 @@ class ArchiveExplorer:
     def thread_exists(self, thread_id):
         return Thread.objects.filter(board=self.board, thread_id=thread_id).exists()
         
-    def get_all_threads(self, request, pageSize=25):
+    def get_all_threads(self, request, pageSize=5):
         search_query = request.GET.get('search', '')
         sort_by = request.GET.get('sort', 'thread_id')
         sort_order = request.GET.get('sort_order', 'asc')
