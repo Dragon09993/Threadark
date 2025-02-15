@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     {% load static %}
-    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+   
     {% load pipeline %}
     {% load compress %}
     {% block extra_head %}{% endblock %}
@@ -47,21 +47,13 @@
                             Live Boards
                         </a>
                         <div class="navbar-dropdown">
-                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'adv' %}"">
-                                /adv/ - Advice
-                            </a>
-                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'trv' %}">
-                                /trv/ - Travel
-                            </a>
-                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'sci' %}">
-                                /sci/ - Science
-                            </a>
-                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'mu' %}">
-                                /mu/ - Music
-                            </a>
-                            <a class="navbar-item" href="{% url 'view_catalog_with_board' 'g' %}">
-                                /g/ - Technology
-                            </a>
+                            {% for board in boards %}
+                                {% if board.active %}
+                                    <a class="navbar-item" href="{% url 'view_catalog_with_board' board.name|slice:'1:' %}">
+                                        {{ board.name }}/ - {{ board.description }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
                                 <!-- Add more boards as needed -->
                             </div>
                         </div>
@@ -71,21 +63,13 @@
                                 Archives
                             </a>
                             <div class="navbar-dropdown">
-                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'adv' %}"">
-                                    /adv/ - Advice
-                                </a>
-                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'trv' %}">
-                                    /trv/ - Travel
-                                </a>
-                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'sci' %}">
-                                    /sci/ - Science
-                                </a>
-                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'mu' %}">
-                                    /mu/ - Music
-                                </a>
-                                <a class="navbar-item" href="{% url 'view_archive_with_board' 'g' %}">
-                                    /g/ - Technology
-                                </a>
+                                {% for board in boards %}
+                                    {% if board.active %}
+                                        <a class="navbar-item" href="{% url 'view_archive_with_board' board.name|slice:'1:' %}">
+                                            {{ board.name }}/ - {{ board.description }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
                                     <!-- Add more boards as needed -->
                                 </div>
                             </div>                        

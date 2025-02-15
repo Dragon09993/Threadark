@@ -1,6 +1,15 @@
 from django.db import models
 
 # Create your models here.
+class Board(models.Model):
+    name = models.CharField(max_length=5, unique=True)  # Board name (e.g., 'g', 'b', etc.)
+    description = models.TextField(null=True, blank=True)  # Description of the board
+    active = models.BooleanField(default=False)  # Indicates if the board is active
+
+    def __str__(self):
+        return self.name
+
+
 class Thread(models.Model):
     # Define the fields for the Thread model id (primary), thread_id, thread_title, thread_status, thread_url, created_at
     id = models.AutoField(primary_key=True)
