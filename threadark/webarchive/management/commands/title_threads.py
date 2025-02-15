@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from webarchive.models import Thread, Message
 from transformers import pipeline
+import html
 
 class Command(BaseCommand):
     help = "Updates all threads with a generated title based on the first message if no title exists or is blank"
@@ -20,8 +21,11 @@ class Command(BaseCommand):
                 # Fetch the first message in the thread for the current board
                 first_message = Message.objects.filter(thread_id=thread, board=board).order_by('time').first()
                 if first_message:
+                    # Decode HTML entities in the text
+                    decoded_text = html.unescape(first_message.text)
+                    
                     # Generate a title using the first message
-                    summary = summarizer(first_message.text, max_length=10, min_length=5, do_sample=False)
+                    summary = summarizer(decoded_text, max_length=10, min_length=5, do_sample=False)
                     generated_title = summary[0]['summary_text']
 
                     # Update the thread title

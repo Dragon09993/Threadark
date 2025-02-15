@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 class Board(models.Model):
     name = models.CharField(max_length=5, unique=True)  # Board name (e.g., 'g', 'b', etc.)
+    long_name = models.CharField(max_length=50, null=True, blank=True)  # Long name of the board
     description = models.TextField(null=True, blank=True)  # Description of the board
     active = models.BooleanField(default=False)  # Indicates if the board is active
 

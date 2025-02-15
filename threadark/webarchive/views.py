@@ -45,7 +45,6 @@ def view_live_thread(request, board, thread_id):
     fourchanAPI = FourChanApiWrapper(board)
     thread_data = fourchanAPI.get_posts_with_urls(thread_id)
     posts = fourchanAPI.format_posts(thread_data['posts'])
-    pprint(posts)
     return render(request, 'webarchive/view_live_thread.html', {'posts': posts, 'board': board, 'thread_id': thread_id, 'is_archived': is_archived})
 
 

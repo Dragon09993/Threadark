@@ -50,7 +50,7 @@
                             {% for board in boards %}
                                 {% if board.active %}
                                     <a class="navbar-item" href="{% url 'view_catalog_with_board' board.name|slice:'1:' %}">
-                                        {{ board.name }}/ - {{ board.description }}
+                                        {{ board.name }}/ - {{ board.long_name }}
                                     </a>
                                 {% endif %}
                             {% endfor %}
@@ -66,7 +66,7 @@
                                 {% for board in boards %}
                                     {% if board.active %}
                                         <a class="navbar-item" href="{% url 'view_archive_with_board' board.name|slice:'1:' %}">
-                                            {{ board.name }}/ - {{ board.description }}
+                                            {{ board.name }}/ - {{ board.long_name }}
                                         </a>
                                     {% endif %}
                                 {% endfor %}
