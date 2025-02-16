@@ -23,6 +23,11 @@ services:
       - AWS_SECRET_ACCESS_KEY=9EcXTUmPtGSs2hJd4aifsFj8visACnC9JnC7OBYE
       - AWS_STORAGE_BUCKET_NAME=picels
       - AWS_S3_ENDPOINT_URL=minio:9000
+      - EMAIL_HOST=smtp.example.com
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=True
+      - EMAIL_HOST_USER=your-email@example.com
+      - EMAIL_HOST_PASSWORD=your-email-password
 
   db:
     image: postgres:13
