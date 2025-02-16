@@ -1,8 +1,32 @@
 {% extends "webarchive/base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="title">Welcome to Threadark</h1>
-    <p>This is the home page. Here you will find bulletin posts and featured threads in the future.</p>
-</div>
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title">Welcome to Threadark</h1>
+            <h2 class="subtitle">The ultimate 4Chan thread archive</h2>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-two-thirds">
+                <div class="box">
+                    <h3 class="title is-4">Featured Threads</h3>
+                    <p>This section will contain featured threads in the future.</p>
+                </div>
+
+            </div>
+            <div class="column">
+                <div class="box">
+                    <h3 class="title is-4">Bulletin Posts</h3>
+                    <p>This section will contain bulletin posts in the future.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

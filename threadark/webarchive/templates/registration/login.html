@@ -1,12 +1,48 @@
 {% extends "webarchive/base.html" %}
+{% load form_tags %}
 {% block title %}Login{% endblock %}
 {% block content %}
-<div class="container">
-    <h2>Login</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="button is-primary">Login</button>
-    </form>
-</div>
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-half">
+
+
+                <div class="box is-max-desktop">
+                    <h2 class="title">Login</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="field">
+                            {{ form.username.label_tag }}
+                            <div class="control">
+                                {{ form.username|add_class:"input" }}
+                            </div>
+                            {% if form.username.errors %}
+                                <p class="help is-danger">{{ form.username.errors }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="field">
+                            {{ form.password.label_tag }}
+                            <div class="control">
+                                {{ form.password|add_class:"input" }}
+                            </div>
+                            {% if form.password.errors %}
+                                <p class="help is-danger">{{ form.password.errors }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="has-text-centered">
+                        <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                    </p>
+                </div><!-- .box -->
+            </div>
+        </div>
+
+    </div>
+</section>
 {% endblock %}

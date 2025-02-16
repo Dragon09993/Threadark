@@ -41,7 +41,7 @@
                     <a class="navbar-item" href="{% url 'about' %}">
                         About
                     </a>
-
+                    {% if user.is_authenticated %}
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link" href="#">
                             Live Boards
@@ -75,7 +75,7 @@
                             </div>
                             
 
-                            {% if user.is_authenticated %}
+                            
                                 <a href="{% url 'logout' %}" class="navbar-item" >Logout</a>
                             {% else %}
                                 <a href="{% url 'login' %}" class="navbar-item" >Login</a>
