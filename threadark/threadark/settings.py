@@ -129,6 +129,7 @@ PIPELINE = {
                 'js/nav-scroll.js',
                 'js/picel-view.js',
                 'js/view-thread.js',
+                'js/helpers.js',
             ),
             'output_filename': 'js/scripts.js',
         },

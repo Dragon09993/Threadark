@@ -8,7 +8,7 @@
 {% block title %} Archived Threads {% endblock %}
 {% block content %}
 <div class="container">
-    <h1 class="title">Threads</h1>
+    <h1 class="title">Threads in /{{board}}</h1>
 
     <!-- Search Form -->
     <form id="search-form">
@@ -17,55 +17,8 @@
 
     <div id="thread-table"></div>
 </div><!-- .container-->
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var table = new Tabulator("#thread-table", {
-        ajaxURL: "{% url 'get_archive_data' board %}",
-        ajaxConfig:"GET",
-        ajaxContentType : "application/json; charset=utf-8",
-        ajaxContentType:"json",
-        pagination:true,
-        paginationMode: "remote",
-        ajaxResponse: function (url, params, response) {
-            return response; // Fix: Ensure only the array is returned
-        },
-
-        layout: "fitColumns",
-        columns: [
-            { title: "ID", field: "id", sorter: "number" },
-            { title: "Thread ID", field: "thread_id", sorter: "number", formatter: function(cell, formatterParams, onRendered) {
-                var thread_id = cell.getValue();
-                var board = cell.getData().board;
-                var url = "/archive/" + board + "/thread/" + thread_id;
-                return "<a href='" + url + "' target='_blank'>" + thread_id + "</a>";
-            }},
-            { title: "Board", field: "board", sorter: "string" },
-            { title: "Title", field: "title", sorter: "string", minWidth: 400, formatter: function(cell, formatterParams, onRendered) {
-                var thread_id = cell.getData().thread_id;
-                var board = cell.getData().board;
-                var url = "/archive/" + board + "/thread/" + thread_id;
-                return "<a href='" + url + "' target='_blank'>" + cell.getValue() + "</a>";
-            }},
-            { title: "Status", field: "status", sorter: "string" },
-            { title: "URL", field: "url", formatter: "link", formatterParams: { target: "_blank" } },
-            { title: "Replies", field: "replies", sorter: "number" },
-            { title: "Created At", field: "created_at", sorter: "datetime" },
-            { title: "Last Updated", field: "last_updated", sorter: "datetime" }
-        ],
-
-    });
-
-    document.getElementById('search-input').addEventListener('input', function() {
-        table.setFilter("title", "like", this.value);
-    });
-
-
-
-
-    
-});
-
-
+    var request_url = "{% url 'get_archive_data' board %}";
 </script>
+<script src="{% static 'js/archive-table.js' %}"></script>
 {% endblock %}

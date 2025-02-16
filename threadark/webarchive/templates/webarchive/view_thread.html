@@ -1,10 +1,15 @@
 {% extends "webarchive/base.html" %}
-
 {% load static %}
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<script src="https://unpkg.com/htmx.org@1.6.1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        addCSRFTokenToHTMXHeaders();
+
+    });
+</script>
 {% endblock %}
 
 {% block title %}Thread View{% endblock %}
@@ -15,41 +20,40 @@
         <div class="box">
             <h1 class="title is-inline">Thread on /{{ board }}/</h1>
             <div id="controls" class="buttons are-small is-pulled-right">
-                <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="/archive/{{board}}/audio/{{thread_id}}" hx-swap="innerHTML" class="button is-warning is-pulled-right">Generate TTS Audio</a>
+                <a href="#" data-board="{{board}}" data-thread-id="{{thread_id}}" hx-trigger="click" hx-get="{% url 'tts_audio' board thread_id %}" hx-swap="innerHTML" class="button is-warning is-pulled-right">Generate TTS Audio</a>
             </div>
-            
         </div>
         <div id="MessageList" class="columns is-multiline">
             {% for post in posts %}
-            <div class="column is-full">
-                <div id="p{{ post.no }}" data-message-no="{{ post.no }}" class="card message">
-                    <div class="card-content">
-                        <div class="media is-flex-direction-column-mobile">
-                            <div class="media-left is-full-mobile">
-                                {% if post.image_url %}
-                                <figure class=" picel image is-128x128">
-                                    <img src="{{ post.image_url }}" alt="Post Image">
-                                </figure>
-                                {% endif %}
-                            </div>
-                            <div class="media-content is-full-mobile">
-                                {% if forloop.first %}
-                                <p class="title is-4">{{ post.sub }}</p>
-                                {% endif %}
-                                <p class="subtitle is-6">
-                                    <span class="has-text-weight-bold">{{ post.name }}</span>
-                                    <span class="has-text-grey">{{ post.now }}</span>
-                                    <span class="has-text-grey">No.{{ post.no }}</span>
-                                    {% if post.has_audio %}
-                                    <button id="play-button-{{ post.no }}" class="button is-small is-info play-audio is-pulled-right" data-audio-url="{{ post.audio_url }}" data-card-id="p{{ post.no }}">Play Audio</button>
+                <div class="column is-full">
+                    <div id="p{{ post.no }}" data-message-no="{{ post.no }}" class="card message">
+                        <div class="card-content">
+                            <div class="media is-flex-direction-column-mobile">
+                                <div class="media-left is-full-mobile">
+                                    {% if post.image_url %}
+                                    <figure class=" picel image is-128x128">
+                                        <img src="{{ post.image_url }}" alt="Post Image">
+                                    </figure>
                                     {% endif %}
-                                </p>
-                                <p class="subtitle is-6">{{ post.com|safe }}</p>
+                                </div>
+                                <div class="media-content is-full-mobile">
+                                    {% if forloop.first %}
+                                    <p class="title is-4">{{ post.sub }}</p>
+                                    {% endif %}
+                                    <p class="subtitle is-6">
+                                        <span class="has-text-weight-bold">{{ post.name }}</span>
+                                        <span class="has-text-grey">{{ post.now }}</span>
+                                        <span class="has-text-grey">No.{{ post.no }}</span>
+                                        {% if post.has_audio %}
+                                        <button id="play-button-{{ post.no }}" class="button is-small is-info play-audio is-pulled-right" data-audio-url="{{ post.audio_url }}" data-card-id="p{{ post.no }}">Play Audio</button>
+                                        {% endif %}
+                                    </p>
+                                    <p class="subtitle is-6">{{ post.com|safe }}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
     </div>
