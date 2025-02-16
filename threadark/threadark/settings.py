@@ -159,4 +159,9 @@ MEDIA_URL = f"{AWS_S3_CUSTOM_DOMAIN}/"
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = "/admin"  # Default login page
+LOGIN_URL = "/archive/login"  # Default login page
+
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'
+SESSION_ENGINE = "django.contrib.sessions.backends.db"

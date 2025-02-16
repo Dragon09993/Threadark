@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import login,logout
 from django_htmx.http import HttpResponseClientRedirect
 
 from .classes.FourChanApiWrapper import FourChanApiWrapper
@@ -8,6 +9,7 @@ from pprint import pprint
 from .classes.ThreadStorage import ThreadStorage
 from .classes.ArchiveExplorer import ArchiveExplorer
 from .classes.TtsGen import TtsGen
+from .forms import UserRegisterForm
 
 # Create your views here.
 
@@ -17,6 +19,18 @@ def index(request):
 
 def about(request):
     return render(request, 'webarchive/about.html')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'webarchive/register.html', {'form': form})
 
 
 @login_required
@@ -101,3 +115,9 @@ def tts_audio(request, board, thread_id):
         tts_generator = TtsGen(board, thread_id)
         tts_generator.generate_thread_audio()
         return HttpResponse("Audio generated successfully.")
+
+
+def custom_logout(request):
+    print("Logout function called!")  # Debugging
+    logout(request)
+    return redirect('login')  # Redirect to login page
