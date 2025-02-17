@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+import uuid
 
 # Create your models here.
 class Board(models.Model):
@@ -59,3 +61,13 @@ class Message(models.Model):
 
     def __str__(self):
         return self.text[:50] if self.text else ''  # Return first 50 characters of the message text or an empty string if text is None
+
+
+class TwoFactorCode(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.UUIDField(default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        # Code is valid for 10 minutes
+        return (timezone.now() - self.created_at).total_seconds() < 600

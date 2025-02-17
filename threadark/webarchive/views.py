@@ -1,16 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth import login,logout
+from django.contrib.auth import login, logout, authenticate
 from django_htmx.http import HttpResponseClientRedirect
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.contrib.auth.forms import AuthenticationForm  # Add this import
 
 from .classes.FourChanApiWrapper import FourChanApiWrapper
 from pprint import pprint
 from .classes.ThreadStorage import ThreadStorage
 from .classes.ArchiveExplorer import ArchiveExplorer
 from .classes.TtsGen import TtsGen
-from .forms import UserRegisterForm
-
+from .forms import UserRegisterForm, TwoFactorForm
+from .models import TwoFactorCode
+from .models import User
 # Create your views here.
 
 def index(request):
@@ -121,3 +125,39 @@ def custom_logout(request):
     print("Logout function called!")  # Debugging
     logout(request)
     return redirect('login')  # Redirect to login page
+
+def send_2fa_code(user):
+    code = TwoFactorCode.objects.create(user=user)
+    send_mail(
+        'Your 2FA Code',
+        f'Your verification code is {code.code}',
+        'from@example.com',
+        [user.email],
+        fail_silently=False,
+    )
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            send_2fa_code(user)
+            request.session['pre_2fa_user_id'] = user.id
+            return redirect('two_factor')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
+
+def two_factor_view(request):
+    if request.method == 'POST':
+        form = TwoFactorForm(request.POST)
+        if form.is_valid():
+            user_id = request.session.get('pre_2fa_user_id')
+            user = User.objects.get(id=user_id)
+            code = form.cleaned_data['code']
+            if TwoFactorCode.objects.filter(user=user, code=code).exists():
+                login(request, user)
+                return redirect('index')
+    else:
+        form = TwoFactorForm()
+    return render(request, 'registration/two_factor.html', {'form': form})

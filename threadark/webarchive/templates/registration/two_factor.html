@@ -1,0 +1,33 @@
+{% extends "webarchive/base.html" %}
+{% load form_tags %}
+{% block title %}Two-Factor Authentication{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-half">
+                <div class="box is-max-desktop">
+                    <h2 class="title">Two-Factor Authentication</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="field">
+                            {{ form.code.label_tag }}
+                            <div class="control">
+                                {{ form.code|add_class:"input" }}
+                            </div>
+                            {% if form.code.errors %}
+                                <p class="help is-danger">{{ form.code.errors }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Verify</button>
+                            </div>
+                        </div>
+                    </form>
+                </div><!-- .box -->
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
