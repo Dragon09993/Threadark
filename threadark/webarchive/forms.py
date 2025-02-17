@@ -11,3 +11,4 @@ class UserRegisterForm(UserCreationForm):
 
 class TwoFactorForm(forms.Form):
     code = forms.UUIDField(label='Verification Code')
+    remember_device = forms.BooleanField(required=False, label='Remember this device for 30 days')

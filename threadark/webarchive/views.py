@@ -5,7 +5,9 @@ from django.contrib.auth import login, logout, authenticate
 from django_htmx.http import HttpResponseClientRedirect
 from django.utils import timezone
 from django.core.mail import send_mail
-from django.contrib.auth.forms import AuthenticationForm  # Add this import
+from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
+import uuid  # Add this import
 
 from .classes.FourChanApiWrapper import FourChanApiWrapper
 from pprint import pprint
@@ -13,8 +15,8 @@ from .classes.ThreadStorage import ThreadStorage
 from .classes.ArchiveExplorer import ArchiveExplorer
 from .classes.TtsGen import TtsGen
 from .forms import UserRegisterForm, TwoFactorForm
-from .models import TwoFactorCode
-from .models import User
+from .models import TwoFactorCode, User
+
 # Create your views here.
 
 def index(request):
@@ -127,7 +129,11 @@ def custom_logout(request):
     return redirect('login')  # Redirect to login page
 
 def send_2fa_code(user):
-    code = TwoFactorCode.objects.create(user=user)
+    code, created = TwoFactorCode.objects.get_or_create(user=user)
+    if not created:
+        code.code = uuid.uuid4()
+        code.created_at = timezone.now()
+        code.save()
     send_mail(
         'Your 2FA Code',
         f'Your verification code is {code.code}',
@@ -141,6 +147,9 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            if request.session.get('remember_device') == user.id:
+                login(request, user)
+                return redirect('index')
             send_2fa_code(user)
             request.session['pre_2fa_user_id'] = user.id
             return redirect('two_factor')
@@ -157,6 +166,12 @@ def two_factor_view(request):
             code = form.cleaned_data['code']
             if TwoFactorCode.objects.filter(user=user, code=code).exists():
                 login(request, user)
+                remember_device = form.cleaned_data.get('remember_device', False)
+                if remember_device:
+                    request.session['remember_device'] = user.id
+                    request.session.set_expiry(2592000)  # 30 days
+                else:
+                    request.session.set_expiry(0)  # Browser session
                 return redirect('index')
     else:
         form = TwoFactorForm()
