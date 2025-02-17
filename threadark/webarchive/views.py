@@ -145,13 +145,17 @@ def send_2fa_code(user):
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
+        # Check if the form is valid
         if form.is_valid():
             user = form.get_user()
+            # Check if the user has opted to remember the device
             if request.session.get('remember_device') == user.id:
                 login(request, user)
                 return redirect('index')
+            # Send 2FA code if the device is not remembered
             send_2fa_code(user)
             request.session['pre_2fa_user_id'] = user.id
+            request.session.save()  # Ensure session is saved
             return redirect('two_factor')
     else:
         form = AuthenticationForm()
@@ -160,19 +164,28 @@ def login_view(request):
 def two_factor_view(request):
     if request.method == 'POST':
         form = TwoFactorForm(request.POST)
+        # Check if the form is valid
         if form.is_valid():
             user_id = request.session.get('pre_2fa_user_id')
             user = User.objects.get(id=user_id)
             code = form.cleaned_data['code']
+            # Verify the 2FA code
             if TwoFactorCode.objects.filter(user=user, code=code).exists():
-                login(request, user)
                 remember_device = form.cleaned_data.get('remember_device', False)
+                # If the user opts to remember the device
                 if remember_device:
                     request.session['remember_device'] = user.id
                     request.session.set_expiry(2592000)  # 30 days
+                    try:
+                        request.session.save()  # Ensure session is saved
+                    except Exception as e:
+                        pass  # Handle exception if session save fails
                 else:
                     request.session.set_expiry(0)  # Browser session
+                login(request, user)
                 return redirect('index')
+            else:
+                form.add_error('code', 'Invalid verification code.')
     else:
         form = TwoFactorForm()
     return render(request, 'registration/two_factor.html', {'form': form})
