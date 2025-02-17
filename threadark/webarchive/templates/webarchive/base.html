@@ -7,11 +7,15 @@
     <title>{% block title %}My Project{% endblock %}</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    
     {% load static %}
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
    
     {% load pipeline %}
     {% load compress %}
-    {% block extra_head %}{% endblock %}
+    {% block extra_head %}
+    
+    {% endblock %}
 
 
 

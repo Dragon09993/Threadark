@@ -12,3 +12,4 @@ django-htmx
 gtts
 transformers
 torch
+fontawesomefree

@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'compressor',
     'webarchive',
     'django_htmx',
+    'fontawesomefree',
 ]
 
 MIDDLEWARE = [

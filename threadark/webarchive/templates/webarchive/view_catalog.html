@@ -1,37 +1,69 @@
 {% extends "webarchive/base.html" %}
+{% block title %}Live /{{board}} Catalog{% endblock %}
+{% block extra_head %}
+<script src="https://unpkg.com/htmx.org@1.6.1"></script>
+
+{% endblock %}
+
 
 {% block content %}
 <div id="catalog" class="container">
     <div class="columns is-multiline">
         {% for thread in threads %}
-        <div class="column is-one-third col-spacer">
+        <div class="column is-one-third col-spacer {% if thread.is_archived %}is-archived{% endif %}">
             <div class="card-item card">
-                <div class="card-image">
-                    <figure class="image is-4by3">
-                        <a href="{% url 'view_live_thread' board  thread.no %}">
-                            <img src="{{ thread.image_url }}" alt="Thread Thumbnail">
-                        </a>
-                    </figure>
+            <div class="card-image">
+                <figure class="image is-4by3">
+                <a href="{% url 'view_live_thread' board  thread.no %}">
+                    <img src="{{ thread.image_url }}" alt="Thread Thumbnail">
+                </a>
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="media">
+                <div class="media-content">
+                    <a href="{% url 'view_live_thread' board  thread.no %}">
+                    <h3 class="title is-4">{{ thread.sub|truncatechars:60 }}</h3>
+                    </a>
                 </div>
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-content">
-                            <a href="{% url 'view_live_thread' board  thread.no %}">
-                                <h3 class="title is-4">{{ thread.sub|truncatechars:60 }}</h3>
+                </div>
+                <div class="content">
+                <p>{{ thread.com|truncatechars:200 }}</p>
+                </div>
+                <div class="metadata">
+                    <div class="columns">
+                        <div class="column is-two-thirds">
+                            <p>Replies: {{ thread.replies }}</p>
+                        </div>
+                        <div class="column is-one-third">
+                            <a class="is-pulled-right" data-board="{{board}}" data-thread-id="{{thread.no}}" hx-trigger="click" hx-get="/archive/store/{{board}}/{{thread.no}}" hx-swap="none" hx-on="htmx:afterRequest:swapClass">
+                                <i class="archfloppy {% if thread.is_archived %}fa-solid{% else %}fa-regular{% endif %} fa-floppy-disk "></i>
                             </a>
                         </div>
+                       
                     </div>
-                    <div class="content">
-                        <p>{{ thread.com|truncatechars:200 }}</p>
-                    </div>
-                    <div class="metadata">
-                        <p>Replies: {{ thread.replies }}</p>
-                        <p>Last Updated: {{ thread.last_updated }}</p>
-                    </div>
+                
+
                 </div>
             </div>
+            </div>
         </div>
+
         {% endfor %}
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('htmx:afterRequest', function(event) {
+          
+            if (event.detail.pathInfo.path === '/archive/store/'+event.detail.target.dataset.board+'/'+event.detail.target.dataset.threadId) {
+                const icon = event.target.querySelector('.archfloppy');
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+            }
+        });
+    });
+</script>
 {% endblock %}
