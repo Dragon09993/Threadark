@@ -43,15 +43,21 @@ def register(request):
 def view_catalog(request, board):
     complete_catalog = []
     fourchanAPI = FourChanApiWrapper(board)
+    explorer = ArchiveExplorer(board)
+    
     catalog = fourchanAPI.get_catalog()
     for page in catalog:
         for thread in page['threads']:
+            thread['is_archived'] = explorer.thread_exists(thread['no'])
             thread['com'] = fourchanAPI.format_message(thread.get('com', ''))
             thread['sub'] = fourchanAPI.format_message(thread.get('sub', ''))
             if 'tim' in thread and 'ext' in thread:
                 thread['image_url'] = f"https://i.4cdn.org/{board}/{thread['tim']}{thread['ext']}"
             else:
                 thread['image_url'] = "#"
+
+
+            
 
             complete_catalog.append(thread)
 

@@ -82,7 +82,7 @@ body {
             .content {
                 line-height: 1.2rem;
                 overflow: hidden;
-                height:85px;
+                height:100px;
             }
 
 
@@ -174,4 +174,9 @@ nav.sticky-top-right {
 .stop-audio {
     background-color: #ff6666;
     border-color: #ff6666;
+}
+
+.archfloppy {
+    float:right;
+    font-size: 2rem;
 }
