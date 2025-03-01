@@ -28,7 +28,7 @@ class ThreadStorage:
         else:
             apiobj = self.FourChanApiWrapper.get_posts_with_urls(thread_id)
             posts= apiobj['posts']
-            url = apiobj['info']['url'];
+            url = apiobj['info']['url']
             for index, post in enumerate(posts):
 
                 if 'image_url' in post and post['image_url']:
