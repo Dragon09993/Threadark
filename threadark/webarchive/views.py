@@ -8,6 +8,9 @@ from django.core.mail import send_mail
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 import uuid  # Add this import
+from django.db.models import Q
+from django.core.paginator import Paginator  # Add this import
+from .models import Thread, Message
 
 from .classes.FourChanApiWrapper import FourChanApiWrapper
 from pprint import pprint
@@ -92,12 +95,25 @@ def store_posts(request, board, thread_id):
 
 @login_required
 def archive_data(request, board):
-    explorer = ArchiveExplorer(board)
-    threads_pages,threads,paginator = explorer.get_all_threads(request)
+    search_query = request.GET.get('search', '')
+    threads = Thread.objects.filter(board=board)
+
+    if search_query:
+        threads = threads.filter(
+            Q(thread_id__icontains=search_query) |
+            Q(board__icontains=search_query) |
+            Q(title__icontains=search_query) |
+            Q(status__icontains=search_query) |
+            Q(message__text__icontains=search_query)  # Filter by message contents
+        ).distinct()
+
+    paginator = Paginator(threads, 10)  # Show 10 threads per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     data = {
         "last_page": paginator.num_pages,
-        "page": request.GET.get('page', 1),
+        "page": page_obj.number,
         "data": [
             {
                 "id": thread.id,
@@ -110,7 +126,7 @@ def archive_data(request, board):
                 "created_at": thread.created_at,
                 "last_updated": thread.last_updated
             }
-            for thread in threads_pages.object_list
+            for thread in page_obj.object_list
         ]
     }
     return JsonResponse(data)

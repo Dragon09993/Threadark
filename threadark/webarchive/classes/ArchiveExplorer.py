@@ -48,8 +48,9 @@ class ArchiveExplorer:
                 Q(thread_id__icontains=search_query) |
                 Q(board__icontains=search_query) |
                 Q(title__icontains=search_query) |
-                Q(status__icontains=search_query)
-            )
+                Q(status__icontains=search_query) |
+                Q(message_text__icontains=search_query)  # Filter by message contents
+            ).distinct()
 
         if sort_order == 'desc':
             sort_by = f'-{sort_by}'
