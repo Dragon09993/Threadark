@@ -86,7 +86,7 @@ class ThreadStorage:
         response = requests.get(image_url, stream=True)
         if response.status_code == 200:
             minio_client = Minio(
-                endpoint="minio:9000",
+                endpoint="10.0.0.2:9000",
                 access_key=os.getenv('AWS_ACCESS_KEY_ID'),
                 secret_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
                 secure=False
@@ -98,7 +98,7 @@ class ThreadStorage:
             try:
                 minio_client.stat_object(bucket_name, object_name)
                 # If the object exists, return the existing URL
-                return f"http://minio:9000/{bucket_name}/{object_name}"
+                return f"http://10.0.0.2:9000/{bucket_name}/{object_name}"
             except Exception as e:
                 try:
                     # If the object does not exist, proceed with the upload
@@ -109,7 +109,7 @@ class ThreadStorage:
                         length=int(response.headers['Content-Length']),
                         content_type=response.headers['Content-Type']
                     )
-                    return f"http://minio:9000/{bucket_name}/{object_name}"
+                    return f"http://10.0.0.2:9000/{bucket_name}/{object_name}"
                 except Exception as e:
                     print(f"Failed to upload image to Minio: {e}")
         return None

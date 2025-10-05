@@ -3,12 +3,12 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python threadark/manage.py runserver 0.0.0.0:8000
+    command: python threadark/manage.py runserver 0.0.0.0:8083
     #command: tail -f /dev/null
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - "8083:8083"
     depends_on:
       - db
       - minio

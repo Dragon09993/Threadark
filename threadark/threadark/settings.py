@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security settings
 SECRET_KEY = 'your-secret-key'
 DEBUG = True
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['10.0.0.2']
 
 # Application definition
 INSTALLED_APPS = [

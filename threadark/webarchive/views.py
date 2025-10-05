@@ -74,7 +74,7 @@ def view_live_thread(request, board, thread_id):
     return render(request, 'webarchive/view_live_thread.html', {'posts': posts, 'board': board, 'thread_id': thread_id, 'is_archived': is_archived})
 
 
-@login_required
+
 def view_thread(request, board, thread_id):
     explorer = ArchiveExplorer(board)
     context = explorer.get_thread_context(thread_id)
@@ -159,10 +159,12 @@ def login_view(request):
                 login(request, user)
                 return redirect('index')
             # Send 2FA code if the device is not remembered
-            send_2fa_code(user)
+            #send_2fa_code(user)
             request.session['pre_2fa_user_id'] = user.id
             request.session.save()  # Ensure session is saved
-            return redirect('two_factor')
+            #return redirect('two_factor')
+            login(request, user) #log me in no 2FA uncomment line above for 2fa and comment this line 
+            return redirect('index')  # TEMPORARILY DISABLED 2FA
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
