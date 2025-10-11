@@ -21,16 +21,51 @@ class TtsGen:
        
         self.tts_engine = gTTS
     
+    def clean_html_for_tts(self, text):
+        """Clean HTML and formatting from text for TTS"""
+        if not text:
+            return ""
+        
+        # Decode HTML entities first
+        text = html.unescape(text)
+        
+        # Remove HTML tags
+        text = re.sub(r'<[^>]+>', '', text)
+        
+        # Replace common formatting with spoken equivalents
+        text = re.sub(r'&gt;&gt;(\d+)', r'replying to post \1', text)  # >>123 -> "replying to post 123"
+        text = re.sub(r'&gt;', '', text)  # Remove greentext arrows
+        text = re.sub(r'\n+', '. ', text)  # Replace newlines with periods
+        
+        # Remove extra whitespace
+        text = re.sub(r'\s+', ' ', text).strip()
+        
+        # Remove or replace other common 4chan formatting
+        text = re.sub(r'\[spoiler\].*?\[/spoiler\]', 'spoiler text', text)  # Spoiler tags
+        text = re.sub(r'==.*?==', 'red text', text)  # Red text
+        
+        # Limit length for TTS (optional - very long posts can be problematic)
+        if len(text) > 500:
+            text = text[:500] + "... message truncated"
+        
+        return text
+    
     def generate_message_audio(self, thread_id, message_id):
         message = Message.objects.filter(thread_id=thread_id, message_id=message_id).first()
         if message.text is None:
             return None
-        else:
-            audio_text = message.text
+        
+        # Clean the text for TTS
+        audio_text = self.clean_html_for_tts(message.text)
+        
+        # Skip if text is empty after cleaning
+        if not audio_text or len(audio_text.strip()) < 3:
+            return None
         
         if message.has_audio:
             return message.audio_url
         try:
+            print(f"Generating TTS for: {audio_text[:100]}...")  # Debug output
             tts = self.tts_engine(text=audio_text, lang='en')
             audio_file = f"{thread_id}_{message_id}.mp3"
             tts.save(audio_file)
@@ -46,6 +81,11 @@ class TtsGen:
             message.audio_url = minio_url
             message.has_audio = True
             message.save()
+            
+            # Clean up local file
+            if os.path.exists(audio_file):
+                os.remove(audio_file)
+                
             return minio_url
         except Exception as e:
             print(f"Error uploading to MinIO: {e}")
@@ -53,7 +93,6 @@ class TtsGen:
 
     def generate_thread_audio(self):
         print(f"Board: {self.board}, Thread ID: {self.thread_id}")
-        # Fetch all messages from the thread
         # Fetch the thread from the database
         thread = Thread.objects.filter(board=self.board, thread_id=self.thread_id).first()
         if not thread:
@@ -61,12 +100,15 @@ class TtsGen:
             return
 
         # Fetch all messages from the thread
-        messages = Message.objects.filter(board=self.board,thread_id=thread.id).order_by('time')
-        pprint(messages)
+        messages = Message.objects.filter(board=self.board, thread_id=thread.id).order_by('time')
+        
         if not messages.exists():
             print("No messages found.")
-        else:
-            pprint(messages)
+            return
+        
+        print(f"Processing {messages.count()} messages for TTS...")
+        
         # Loop through each message and generate audio
         for message in messages:
-            self.generate_message_audio(thread.id,message.message_id)
+            if message.text:  # Only process messages with text
+                self.generate_message_audio(thread.id, message.message_id)
