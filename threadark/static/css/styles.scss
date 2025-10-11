@@ -199,3 +199,29 @@ footer {
         text-align: center;
     }
 }
+
+
+
+    .op-indicator {
+        color: #ff6600 !important;
+        font-weight: bold;
+    }
+    
+    .reply-backlink {
+        color: #0066cc !important;
+        text-decoration: none;
+        font-size: 0.9em;
+        margin-left: 2px;
+    }
+    
+    .reply-backlink:hover {
+        text-decoration: underline;
+        color: #004499 !important;
+    }
+    
+
+    
+    .highlight-reply {
+        background-color: #cce5ff !important;
+        transition: background-color 0.3s ease;
+    }
