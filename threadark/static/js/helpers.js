@@ -14,10 +14,41 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
 function addCSRFTokenToHTMXHeaders() {
-    const csrftoken = getCookie('csrftoken');
-    if (csrftoken) {
-        htmx.ajaxConfig.headers['X-CSRFToken'] = csrftoken;
+    try {
+        const csrftoken = getCookie('csrftoken');
+        
+        if (!csrftoken) {
+            console.warn('CSRF token not found');
+            return;
+        }
+        
+        // Wait for htmx to be available
+        if (typeof htmx !== 'undefined') {
+            // Method 1: Using htmx event system (preferred)
+            document.body.addEventListener('htmx:configRequest', function(evt) {
+                evt.detail.headers['X-CSRFToken'] = csrftoken;
+            });
+            
+            // Method 2: Fallback using htmx.config
+            if (htmx.config) {
+                if (!htmx.config.requestClass) {
+                    htmx.config.requestClass = 'htmx-request';
+                }
+            }
+        } else {
+            // htmx not loaded yet, try again after a short delay
+            setTimeout(function() {
+                if (typeof htmx !== 'undefined') {
+                    document.body.addEventListener('htmx:configRequest', function(evt) {
+                        evt.detail.headers['X-CSRFToken'] = csrftoken;
+                    });
+                } else {
+                    console.warn('HTMX still not available after delay');
+                }
+            }, 100);
+        }
+    } catch (error) {
+        console.error('Error setting up CSRF token for HTMX:', error);
     }
 }
